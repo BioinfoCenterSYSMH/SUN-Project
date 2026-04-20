@@ -1,0 +1,26 @@
+Package: SUNbeta12
+Type: Package
+Title: SUN Beta 1.2 Resolution Recommendation for Seurat SNN Clustering
+Version: 0.1.0
+Authors@R: 
+    person(given = "SUN",
+           family = "Team",
+           role = c("aut", "cre"),
+           email = "sun@example.com")
+Description: Provides SUN beta 1.2 for automatic resolution recommendation
+    in Seurat SNN graph clustering workflows. The package scans resolution
+    intervals, applies plateau-cache aligned interval replacement, and returns
+    a recommended resolution with corresponding cluster labels.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 4.2.0)
+Imports:
+    Seurat,
+    Matrix,
+    igraph,
+    stats,
+    methods,
+    utils
+RoxygenNote: 7.3.2
