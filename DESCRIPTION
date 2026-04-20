@@ -1,7 +1,7 @@
 Package: SUNbeta12
 Type: Package
 Title: SUN Beta 1.2 Resolution Recommendation for Seurat SNN Clustering
-Version: 0.1.0
+Version: 0.1.2
 Authors@R: 
     person(given = "SUN",
            family = "Team",

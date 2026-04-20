@@ -1,10 +1,33 @@
-## Example script for SUNbeta12
+## Example script for SUNbeta12 using bundled HESC demo data
 ##
-## Prerequisite:
-## - `seu` is a Seurat object that already has an SNN graph
-##   (e.g., `RNA_snn` after FindNeighbors)
+## This script:
+## 1) loads bundled hesc_demo (counts + meta.data only),
+## 2) applies UpdateSeuratObject for compatibility,
+## 3) builds SNN graph with the project preprocessing sequence,
+## 4) runs SUN on RNA_snn.
 
 library(SUNbeta12)
+library(Seurat)
+data("hesc_demo", package = "SUNbeta12")
+seu <- hesc_demo
+
+# Some local Seurat setups may require object structure update.
+seu <- tryCatch(
+  SeuratObject::UpdateSeuratObject(seu),
+  error = function(e) seu
+)
+
+set.seed(42)
+DefaultAssay(seu) <- "RNA"
+seu <- NormalizeData(seu, verbose = FALSE)
+seu <- FindVariableFeatures(seu, selection.method = "vst", nfeatures = 2000, verbose = FALSE)
+seu <- ScaleData(seu, verbose = FALSE)
+seu <- RunPCA(seu, features = VariableFeatures(seu), npcs = 30, verbose = FALSE)
+seu <- FindNeighbors(seu, reduction = "pca", dims = 1:10, verbose = FALSE)
+
+if (!"RNA_snn" %in% names(seu@graphs)) {
+  stop("RNA_snn graph not found. SUN requires a Seurat object with an SNN graph.", call. = FALSE)
+}
 
 out <- SUN(
   seurat_obj = seu,

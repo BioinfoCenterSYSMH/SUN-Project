@@ -18,10 +18,25 @@ remotes::install_github("BioinfoCenterSYSMH/SUN-Project")
 ```r
 library(SUNbeta12)
 library(Seurat)
+data("hesc_demo", package = "SUNbeta12")
+seurat_obj <- hesc_demo
 
-# seu: a Seurat object with a precomputed SNN graph (e.g., RNA_snn)
+# Compatibility guard for local Seurat object structure
+seurat_obj <- tryCatch(
+  SeuratObject::UpdateSeuratObject(seurat_obj),
+  error = function(e) seurat_obj
+)
+
+# Build SNN graph (same logic as the project workflow)
+seurat_obj <- NormalizeData(seurat_obj, verbose = FALSE)
+seurat_obj <- FindVariableFeatures(seurat_obj, selection.method = "vst", nfeatures = 2000, verbose = FALSE)
+seurat_obj <- ScaleData(seurat_obj, verbose = FALSE)
+seurat_obj <- RunPCA(seurat_obj, features = VariableFeatures(seurat_obj), npcs = 30, verbose = FALSE)
+seurat_obj <- FindNeighbors(seurat_obj, reduction = "pca", dims = 1:10, verbose = FALSE)
+
+# Run SUN
 res <- SUN(
-  seurat_obj = seu,
+  seurat_obj = seurat_obj,
   r_min = 0,
   r_max = 1,
   tools_key = "all_interval_analysis",
@@ -46,7 +61,12 @@ head(seu_out@meta.data$SUN_Label)
 
 ## Notes
 
-- Input must be a Seurat object with an available SNN graph.
+- `SUN()` accepts Seurat objects with an available SNN graph (e.g., `RNA_snn`).
+- If no SNN graph exists, run preprocessing first. For the bundled HESC demo,
+  the SNN construction steps are:
+  `NormalizeData` -> `FindVariableFeatures` -> `ScaleData` -> `RunPCA` -> `FindNeighbors`.
+- If object-version compatibility errors appear, apply
+  `SeuratObject::UpdateSeuratObject()` before preprocessing.
 - `SUN_Label` is written to `meta.data` for downstream analysis and visualization.
 
 ## License
