@@ -1,29 +1,25 @@
-# SUNbeta12
+# SUN-Project
 
-`SUNbeta12` is an R package wrapper for the SUN beta 1.2 resolution-recommendation workflow on Seurat SNN graphs.
+SUN provides reproducible resolution recommendation for Seurat SNN clustering using stable intervals and graph-distance silhouette.
 
-## What it does
+## Overview
 
-- scans resolution intervals from `r_min` to `r_max`
-- reuses and validates existing interval cache when available
-- applies beta 1.2 plateau-cache aligned interval replacement
-- recommends a resolution using graph-distance silhouette + interval width
-- writes `SUN_Label` (and compatibility label `SUN_Label_beta11`) into `meta.data`
+SUN is an R toolkit for automatic and auditable resolution selection in graph-based single-cell clustering workflows built on Seurat objects.
 
-## Install (after pushing to GitHub)
+## Installation
 
 ```r
 install.packages("remotes")
-remotes::install_github("YOUR_GITHUB_USERNAME/SUNbeta12")
+remotes::install_github("BioinfoCenterSYSMH/SUN-Project")
 ```
 
-## Minimal usage
+## Quick Start
 
 ```r
 library(SUNbeta12)
 library(Seurat)
 
-# seu should already contain an SNN graph, e.g. RNA_snn
+# seu: a Seurat object with a precomputed SNN graph (e.g., RNA_snn)
 res <- SUN(
   seurat_obj = seu,
   r_min = 0,
@@ -33,17 +29,26 @@ res <- SUN(
   random.seed = 42L
 )
 
+# Recommended resolution
+res$recommended_resolution
+
+# Output Seurat object with SUN labels
 seu_out <- res$seurat_obj
-rec_r <- res$recommended_resolution
 head(seu_out@meta.data$SUN_Label)
 ```
 
-## Build source tarball
+## Output
 
-From terminal:
+`SUN()` returns a list containing:
+- `seurat_obj`: Seurat object with SUN results written back
+- `recommended_resolution`: recommended Louvain resolution
+- `recommendation`: ranking details for candidate intervals
 
-```bash
-R CMD build SUNbeta12
-```
+## Notes
 
-This produces a `.tar.gz` package you can upload/release.
+- Input must be a Seurat object with an available SNN graph.
+- `SUN_Label` is written to `meta.data` for downstream analysis and visualization.
+
+## License
+
+MIT
