@@ -6,6 +6,10 @@ SUN provides reproducible resolution recommendation for Seurat SNN clustering us
 
 SUN is an R toolkit for automatic and auditable resolution selection in graph-based single-cell clustering workflows built on Seurat objects.
 
+## Exact maximization of classical modularity
+
+We recently showed that there is no need to tune the resolution $r$ by hand if the sole goal is to find the highest classical modularity $Q$ among the partitions our deterministic Louvain procedure can return. On Jaccard shared nearest-neighbor graphs with fixed neighbor count $k$ and positive total edge weight, our algorithm enumerates in polynomial time every distinct partition obtainable as $r$ ranges over all nonnegative real numbers. It scores each partition using the same classical modularity and returns every partition that attains the maximum. [Code and proof in Modularity-Max-Cluster-Under-Louvain](https://github.com/BioinfoCenterSYSMH/Modularity-Max-Cluster-Under-Louvain).
+
 ## Installation
 
 ```r
